@@ -1,0 +1,7 @@
+/* Generic shared status indicator: no module-specific selectors. */
+.cv2-status-signal {display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid;border-radius:5px;font-size:12px;font-weight:600;white-space:nowrap}
+.cv2-status-signal--neutral {color:#667085;background:#f8fafc;border-color:#d0d5dd}
+.cv2-status-signal--warning {color:#9a6700;background:#fff8db;border-color:#e9ca78}
+.cv2-status-signal--info {color:#175cd3;background:#eff8ff;border-color:#b2ddff}
+.cv2-status-signal--danger {color:#b42318;background:#fef3f2;border-color:#fecdca}
+.cv2-status-signal--success {color:#027a48;background:#ecfdf3;border-color:#a6f4c5}

@@ -1,0 +1,599 @@
+:root{--cv2-control-height:var(--cv2-input-height);--cv2-screen-gap:var(--cv2-card-gap);--cv2-page-title-size:25px}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fc;color:#17375f;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px}.cv2-app{max-width:var(--cv2-page-max-width);margin:0 auto;padding:40px var(--cv2-page-padding-x)}.cv2-pagehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:15px}.cv2-pagehead__left,.cv2-row{display:flex;align-items:center;gap:10px}.cv2-title{font-size:var(--cv2-page-title-size);margin:0 18px 0 0}.cv2-card{margin-bottom:var(--cv2-screen-gap)}.cv2-search{background:var(--cv2-search-background)}.cv2-muted{font-size:12px;color:#56708e}.cv2-table{white-space:nowrap}.cv2-table th,.cv2-table td{padding:0 var(--cv2-list-cell-padding-x)}.cv2-table th.right,.cv2-table td.right{text-align:right}.cv2-sort{border:0;background:transparent;color:inherit;cursor:pointer;font:inherit;font-weight:600}.cv2-pagination{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:12px}.cv2-expanded>td{background:#eef4ff}.cv2-detail{padding:10px}.cv2-footnote{color:#667c96;text-align:center;font-size:12px}.cv2-field span{font-weight:600}.cv2-empty{text-align:center;padding:25px!important}.cv2-button:focus-visible,.cv2-sort:focus-visible{outline:2px solid #1b4b88;outline-offset:2px}@media(max-width:760px){.cv2-app{padding:18px 10px}.cv2-pagehead{align-items:flex-start;flex-direction:column}.cv2-title{font-size:21px}.cv2-card__heading{align-items:flex-start}.cv2-table-scroll{max-width:100%}}.cv2-required{color:#b42318;font-style:normal}.cv2-item{border:1px solid #d4e1f0;border-radius:7px;padding:12px;margin:0 0 12px;background:#fafcff}.cv2-item__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cv2-actions{display:flex;justify-content:flex-end;margin:14px 0}.cv2-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.cv2-totals>div{display:flex;justify-content:space-between;gap:12px;padding:12px;border:1px solid #d4e1f0;border-radius:6px}.cv2-totals strong{font-size:16px}.cv2-field input[type=number]{text-align:right}@media(max-width:700px){.cv2-totals{grid-template-columns:1fr}}
+
+/* common_v2 item grid: one generic table layout for all business modules */
+.cv2-itemgrid-wrap{overflow-x:auto;width:100%;border:1px solid #d4e1f0;border-radius:6px}
+.cv2-itemgrid{width:100%;border-collapse:collapse;table-layout:fixed;min-width:1020px}
+.cv2-itemgrid th{background:#e7effa;text-align:left;font-weight:600;padding:10px 7px;white-space:nowrap;border-bottom:1px solid #d4e1f0}
+.cv2-itemgrid td{padding:7px 5px;border-bottom:1px solid #d4e1f0;vertical-align:middle}
+.cv2-itemgrid tbody tr:last-child td{border-bottom:0}
+.cv2-itemgrid .cv2-field{display:block;min-width:0}
+.cv2-itemgrid .cv2-field>span:first-child{display:none}
+.cv2-itemgrid .cv2-field input,.cv2-itemgrid .cv2-field select{width:100%;min-width:0;height:var(--cv2-grid-control-height)}
+.cv2-itemgrid th:last-child,.cv2-itemgrid td:last-child{width:72px;text-align:center}
+.cv2-itemgrid .cv2-button{padding:6px 8px}
+
+/* Shared detail presentation; module-independent */
+.cv2-detail-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px 0;border-bottom:1px solid #d7e4f4;margin-bottom:14px}
+.cv2-detail-stat{display:flex;flex-direction:column;gap:6px;font-size:12px;min-width:0}
+.cv2-detail-stat span{color:#64748b}.cv2-detail-stat strong{font-size:13px;overflow-wrap:anywhere}
+.cv2-detail-table{margin-top:8px}
+@media(max-width:800px){.cv2-detail-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Keep page width stable when switching LIST/DETAIL */
+html{overflow-y:scroll;scrollbar-gutter:stable}
+.cv2-card{width:100%;min-width:0}
+.cv2-itemgrid .cv2-field input,.cv2-itemgrid .cv2-field select{min-height:var(--cv2-grid-control-height)}
+
+
+/* V22: central component contract — no per-module size rules */
+:root{--cv2-page-title-size:var(--cv2-font-page-title)}
+body{font-size:var(--cv2-font-body)}
+.cv2-title{font-size:var(--cv2-font-page-title)}
+.cv2-card h2{font-size:var(--cv2-font-card-title)}
+.cv2-field label,.cv2-field>span{font-size:var(--cv2-font-label)}
+.cv2-field input:not([type=checkbox]),.cv2-field select,
+.cv2-field textarea{font-family:inherit;font-size:var(--cv2-font-control);line-height:normal}
+.cv2-field input:not([type=checkbox]),.cv2-field select{height:var(--cv2-input-height);min-height:var(--cv2-input-height);padding:0 10px}
+.cv2-button{box-sizing:border-box;height:var(--cv2-button-height);min-height:var(--cv2-button-height);padding:0 14px;font-family:inherit;font-size:var(--cv2-font-button);line-height:normal;white-space:nowrap}
+.cv2-table{font-size:var(--cv2-font-table)}
+.cv2-table thead th{height:var(--cv2-list-header-height)}
+.cv2-table tbody td{height:var(--cv2-list-row-height)}
+.cv2-table .cv2-button,.cv2-itemgrid .cv2-button{height:var(--cv2-grid-control-height);min-height:var(--cv2-grid-control-height);padding:0 9px}
+.cv2-itemgrid th{height:var(--cv2-list-header-height);padding:0 7px;font-size:var(--cv2-font-table)}
+.cv2-itemgrid td{height:var(--cv2-list-row-height);padding:2px 5px;font-size:var(--cv2-font-table)}
+.cv2-itemgrid .cv2-field input:not([type=checkbox]),.cv2-itemgrid .cv2-field select{height:var(--cv2-grid-control-height);min-height:var(--cv2-grid-control-height);padding:0 8px;font-size:var(--cv2-font-control)}
+.cv2-sort{font-size:var(--cv2-font-table)}
+.cv2-muted,.cv2-message,.cv2-footnote,.cv2-card__detail,.cv2-detail-stat{font-size:var(--cv2-font-hint)}
+.cv2-detail-stat strong{font-size:var(--cv2-font-body)}
+
+/* V23 shared controls: no module-owned height, font, padding or color. */
+.cv2-field{gap:var(--cv2-label-gap)}
+.cv2-field-grid{gap:var(--cv2-field-grid-gap)}
+.cv2-field .cv2-control{font-size:var(--cv2-font-control);font-family:inherit;height:var(--cv2-input-height);min-height:var(--cv2-input-height);border-radius:var(--cv2-control-radius);border-color:var(--cv2-control-border);padding-inline:var(--cv2-control-padding-x);max-width:100%;}
+.cv2-field .cv2-control--auto,.cv2-field .cv2-control--full{width:100%}
+.cv2-field .cv2-control--compact{width:var(--cv2-control-width-compact)}
+.cv2-field .cv2-control--normal{width:var(--cv2-control-width-normal)}
+.cv2-field .cv2-control--date{width:var(--cv2-control-width-date)}
+.cv2-field .cv2-control--wide{width:var(--cv2-control-width-wide)}
+.cv2-itemgrid .cv2-field .cv2-control{width:100%;height:var(--cv2-grid-control-height);min-height:var(--cv2-grid-control-height)}
+
+.cv2-card__heading{min-width:0;flex:1 1 auto}
+.cv2-totals-inline{display:flex;align-items:center;flex-wrap:wrap;gap:6px var(--cv2-totals-gap);font-size:var(--cv2-font-hint);font-weight:normal;color:#56708e}
+.cv2-totals-inline strong{font-size:var(--cv2-font-control);color:#17375f;margin-left:4px}
+.cv2-totals-inline__total{font-weight:600}
+.cv2-item-actions{gap:8px}
+@media(max-width:600px){.cv2-search-field{flex:1 1 min(100%,180px)}.cv2-card__actions{justify-content:flex-end}.cv2-totals-inline{width:100%}}
+
+.cv2-item-actions{flex-wrap:wrap;justify-content:flex-end}
+.cv2-totals-inline{justify-content:flex-end}
+
+/* Shared semantic layout: query, register, edit, master and all future screens. */
+.cv2-semantic-fields{display:flex;flex-wrap:wrap;align-items:end;gap:var(--cv2-search-gap-y) var(--cv2-search-gap-x)}
+.cv2-semantic-field{flex:0 1 var(--cv2-search-width-normal);min-width:0}
+.cv2-semantic-field--date{flex-basis:var(--cv2-search-width-date)}
+.cv2-semantic-field--compact{flex-basis:var(--cv2-search-width-compact)}
+.cv2-semantic-field--party{flex-basis:var(--cv2-search-width-party)}
+.cv2-semantic-field--document{flex-basis:var(--cv2-search-width-document)}
+.cv2-semantic-field--part{flex-basis:var(--cv2-search-width-part)}
+.cv2-semantic-field--part-name{flex-basis:var(--cv2-search-width-part-name)}
+.cv2-semantic-field--long{flex-basis:var(--cv2-search-width-long)}
+.cv2-semantic-field .cv2-control{width:100%;max-width:100%}
+@media(max-width:600px){.cv2-semantic-field{flex:1 1 min(100%,180px)}}
+
+.connection-message{max-width:760px;margin:70px auto;font:15px sans-serif}.connection-message input{width:100%;max-width:460px;height:34px}
+
+/* Shared header slots: title-side content / right-side information / action pair. */
+.cv2-card__heading{display:flex;align-items:center;gap:24px;min-width:0;flex:1 1 auto}
+.cv2-card__heading h2{flex:0 0 auto}
+.cv2-card__actions{display:flex;align-items:center;gap:16px;flex:0 0 auto}
+.cv2-card__action-meta{display:flex;align-items:center;white-space:nowrap;font-size:12px}
+.cv2-card__action-meta .cv2-totals-inline{justify-content:flex-end}
+@media(max-width:850px){.cv2-card__header{flex-wrap:wrap;gap:12px}.cv2-card__actions{margin-left:auto}.cv2-card__heading{flex-wrap:wrap}}
+
+/* Common V2: two optional header auxiliary slots, never module-specific. */
+.cv2-card__heading{display:flex;align-items:center;gap:24px;min-width:0;flex:1 1 auto}
+.cv2-card__heading h2{flex:0 0 auto}
+.cv2-card__aux{display:flex;align-items:center;min-width:0;gap:8px;font-size:var(--cv2-font-hint)}
+.cv2-card__aux--left{justify-content:flex-start}
+.cv2-card__actions{display:flex;align-items:center;gap:16px;flex:0 0 auto;margin-left:auto}
+.cv2-card__aux--right{justify-content:flex-end}
+@media(max-width:850px){.cv2-card__header{flex-wrap:wrap;gap:12px}.cv2-card__heading{flex-wrap:wrap}.cv2-card__actions{margin-left:auto;flex-wrap:wrap;justify-content:flex-end}}
+
+/* Shared autocomplete: visually aligned to the existing customer native select.
+   Native select option highlighting is browser-owned; this list mirrors its grey/white state. */
+.cv2-autocomplete{position:relative}
+.cv2-autocomplete-options{position:absolute;top:100%;left:0;width:100%;z-index:100;background:#fff;border:1px solid #c9d7e8;border-radius:2px;box-shadow:0 3px 8px #17375f1c;padding:0;margin-top:1px}
+.cv2-autocomplete-options[hidden]{display:none}
+.cv2-autocomplete-list{max-height:208px;overflow-y:auto;overscroll-behavior:contain}
+.cv2-autocomplete-option{display:block;width:100%;min-height:26px;line-height:20px;padding:3px 12px;margin:0;border:0;border-radius:0;background:#fff;color:#17375f;text-align:left;font-family:inherit;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.cv2-autocomplete-option:hover,.cv2-autocomplete-option--active{background:#777;color:#fff}
+.cv2-autocomplete-count{padding:5px 10px;border-top:1px solid #d8e3f0;background:#f7f9fc;color:#52667d;font-size:11px;text-align:right}
+
+/* All shared numeric inputs: right-aligned, no native spinner, unchanged height. */
+.cv2-field .cv2-control--numeric { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Common V2 optional subtitle and compact report summary */
+.cv2-pagehead__heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.cv2-pagehead__heading .cv2-title{margin:0}
+.cv2-pagehead__subtitle{font-size:12px;color:#64748b;line-height:1.35}
+.cv2-summary-strip{display:grid;grid-template-columns:repeat(var(--cv2-summary-count,5),minmax(0,1fr));gap:12px;padding:12px 16px 4px;margin-bottom:0;border-bottom:0}
+.cv2-summary-strip__stat{display:flex;flex-direction:column;gap:5px;min-width:0}
+.cv2-summary-strip__stat span{font-size:12px;color:#64748b}
+.cv2-summary-strip__stat strong{font-size:14px;color:#17375f;font-variant-numeric:tabular-nums}
+@media(max-width:760px){.cv2-summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Common V2 search checkbox: same label row, control height and border as other fields. */
+.cv2-semantic-field--checkbox{align-self:end}
+.cv2-search-checkbox{display:flex;flex-direction:column;gap:var(--cv2-label-gap);min-width:0}
+.cv2-search-checkbox>label{display:block;font-size:var(--cv2-font-label);font-weight:600;line-height:normal;color:#17375f;cursor:pointer}
+.cv2-search-checkbox__control{height:var(--cv2-input-height);min-height:var(--cv2-input-height);display:flex;align-items:center;justify-content:flex-start}
+.cv2-search-checkbox__control>input[type="checkbox"]{appearance:auto;box-sizing:border-box;display:block;flex:0 0 16px;width:16px;height:16px;min-width:16px;min-height:16px;margin:0;border:1px solid var(--cv2-control-border);border-radius:3px;accent-color:#1b4b88;cursor:pointer}
+
+/* Shared optional alignment for compact search checkbox fields. */
+.cv2-search-checkbox--end>label{text-align:right}
+.cv2-search-checkbox--end .cv2-search-checkbox__control{justify-content:flex-end}
+
+/* Shared centered alignment for compact checkbox search fields. */
+.cv2-search-checkbox--center>label{text-align:center}
+.cv2-search-checkbox--center .cv2-search-checkbox__control{justify-content:center}
+
+/* Common V2: apply the same input contract inside tables and other assemblies. */
+.cv2-app .cv2-control{box-sizing:border-box;min-height:var(--cv2-input-height);height:var(--cv2-input-height);border:1px solid var(--cv2-control-border);border-radius:var(--cv2-control-radius);padding:0 var(--cv2-control-padding-x);background:#fff;color:#17375f;font-family:inherit;font-size:var(--cv2-font-control);max-width:100%;}
+.cv2-app .cv2-control--numeric{text-align:right;font-variant-numeric:tabular-nums;}
+.cv2-app .cv2-table .cv2-control{width:100%;min-width:0;height:var(--cv2-grid-control-height);min-height:var(--cv2-grid-control-height);}
+.cv2-app .cv2-control:disabled{opacity:.6;cursor:not-allowed;}
+
+/* Shared table standard: remarks remain last and long notes do not widen action columns. */
+.cv2-table .cv2-remark-ellipsis { display:block; max-width: 16rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Common bounded remarks: keep action buttons visible at the right. */
+.cv2-table .cv2-remark-ellipsis{max-width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.cv2-card__actions{margin-left:auto}
+
+/* Reusable single-line metrics in card heading right slot. */
+.cv2-title-metric{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.cv2-title-metric strong{font-weight:700;color:#17375f;font-variant-numeric:tabular-nums}
+.cv2-title-metric-separator{color:#b2c1d4;margin:0 2px}
+.cv2-card__aux--right:has(.cv2-title-metric){flex-wrap:wrap;row-gap:4px;max-width:100%;justify-content:flex-end;white-space:normal}
+.cv2-card__action-meta:has(.cv2-title-metric){white-space:normal}
+
+/* Shared sequential workflow layout for document registration, follow-up and detail. */
+.cv2-workflow {display:flex;flex-direction:column;gap:var(--cv2-screen-gap,16px);min-width:0}
+.cv2-semantic-fields {display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.cv2-semantic-fields > .cv2-field {display:flex;flex-direction:column;gap:4px;min-width:150px;flex:1 1 180px}
+.cv2-semantic-fields input,.cv2-semantic-fields select {box-sizing:border-box;max-width:100%;height:32px;border:1px solid #c9d7e8;border-radius:3px;padding:4px 8px;font:inherit}
+.cv2-card > .cv2-table-scroll,.cv2-card > .cv2-workflow {margin-top:8px}
+.cv2-workflow .cv2-card {margin:0}
+.cv2-workflow-summary {display:flex;gap:16px;justify-content:flex-end;flex-wrap:wrap}
+.cv2-workflow-note {padding:8px 12px;line-height:1.55;color:#42546b}
+.cv2-workflow-details {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 18px}
+@media(max-width:700px){.cv2-semantic-fields>.cv2-field{flex-basis:100%}}
+
+/* Shared workflow manual: four columns, multiline content, no horizontal scrollbar. */
+.cv2-workflow-manual { width:100%; max-width:100%; overflow-x:visible; }
+.cv2-workflow-manual .cv2-table { width:100%; min-width:0; table-layout:fixed; }
+.cv2-workflow-manual .cv2-table th:nth-child(1),
+.cv2-workflow-manual .cv2-table td:nth-child(1) { width:10%; }
+.cv2-workflow-manual .cv2-table th:nth-child(2),
+.cv2-workflow-manual .cv2-table td:nth-child(2) { width:17%; }
+.cv2-workflow-manual .cv2-table th:nth-child(3),
+.cv2-workflow-manual .cv2-table td:nth-child(3) { width:17%; }
+.cv2-workflow-manual .cv2-table th:nth-child(4),
+.cv2-workflow-manual .cv2-table td:nth-child(4) { width:56%; }
+.cv2-workflow-manual .cv2-table th,
+.cv2-workflow-manual .cv2-table td { height:auto; padding:12px 10px; text-align:left; vertical-align:top; white-space:normal; overflow-wrap:anywhere; word-break:keep-all; line-height:1.65; }
+
+/* Shared semantic filter placement and conditional numeric emphasis. */
+.cv2-semantic-fields>.cv2-semantic-field--right-start{margin-left:auto;flex:0 0 auto}
+.cv2-semantic-fields>.cv2-semantic-field--right{flex:0 0 auto}
+.cv2-semantic-field--right-start .cv2-search-checkbox,.cv2-semantic-field--right .cv2-search-checkbox{min-width:100px}
+.cv2-value--danger{color:#b42318;font-weight:700}
+@media(max-width:700px){.cv2-semantic-fields>.cv2-semantic-field--right-start{margin-left:0}}
+
+/* Generic field-adjacent action used by form/search compositions. */
+.cv2-inline-action{display:flex;align-items:center;gap:8px;min-width:0}
+.cv2-inline-action>.cv2-control{flex:1 1 auto;min-width:0}
+.cv2-inline-action>button{flex:0 0 auto}
+
+/* Semantic autocomplete with an adjacent action: preserve the search input's
+   central width instead of sharing that width with the action button. */
+.cv2-semantic-field--with-action.cv2-semantic-field--part{--cv2-inline-search-width:var(--cv2-search-width-part)}
+.cv2-semantic-field--with-action.cv2-semantic-field--part-name{--cv2-inline-search-width:var(--cv2-search-width-part-name)}
+.cv2-semantic-field--with-action.cv2-autocomplete{flex:0 0 auto}
+.cv2-semantic-field--with-action.cv2-autocomplete .cv2-inline-action>.cv2-control{flex:0 0 var(--cv2-inline-search-width);width:var(--cv2-inline-search-width);max-width:var(--cv2-inline-search-width)}
+.cv2-semantic-field--with-action.cv2-autocomplete .cv2-autocomplete-options{width:var(--cv2-inline-search-width)}
+
+/* Shared editable table: preserve desktop grid; show full-context item cards on phones. */
+.cv2-editable-mobile-cards{display:none}
+@media(max-width:720px){
+ .cv2-editable-desktop-grid{display:none}
+ .cv2-editable-mobile-cards{display:grid;gap:12px;min-width:0}
+ .cv2-editable-mobile-card{border:1px solid #d4e1f0;border-radius:8px;padding:12px;background:#fafcff;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;min-width:0}
+ .cv2-editable-mobile-field{display:flex;flex-direction:column;gap:5px;min-width:0;overflow-wrap:anywhere}
+ .cv2-editable-mobile-field:first-child,.cv2-editable-mobile-field:nth-child(2),.cv2-editable-mobile-field--input{grid-column:1/-1}
+ .cv2-editable-mobile-field label{font-size:12px;font-weight:600;color:#56708e}
+ .cv2-editable-mobile-field span{font-size:14px;white-space:normal;overflow-wrap:anywhere}
+ .cv2-editable-mobile-field .cv2-control{width:100%;max-width:100%;min-width:0}
+ .cv2-editable-mobile-action{grid-column:1/-1;text-align:right}
+}
+
+/* Shared compact mobile table: fixed part number, horizontal scrolling for other fields. */
+.cv2-editable-mobile-table{display:none}
+@media(max-width:720px){
+ .cv2-editable-mobile-table{display:block;min-width:0}
+ .cv2-editable-mobile-table .cv2-table{width:max-content;min-width:100%;table-layout:auto}
+ .cv2-editable-mobile-table .cv2-table th,.cv2-editable-mobile-table .cv2-table td{min-width:100px}
+ .cv2-editable-mobile-table .cv2-table th:first-child,.cv2-editable-mobile-table .cv2-table td:first-child{min-width:112px;max-width:144px}
+ .cv2-editable-mobile-table .cv2-table th:nth-child(2),.cv2-editable-mobile-table .cv2-table td:nth-child(2){min-width:128px}
+ .cv2-editable-mobile-table .cv2-control{min-width:104px}
+ .cv2-editable-mobile-table--compact-numeric .cv2-table th:nth-child(2),
+ .cv2-editable-mobile-table--compact-numeric .cv2-table td:nth-child(2),
+ .cv2-editable-mobile-table--compact-numeric .cv2-table th:nth-child(3),
+ .cv2-editable-mobile-table--compact-numeric .cv2-table td:nth-child(3){min-width:0;width:92px;max-width:92px;box-sizing:border-box}
+ .cv2-editable-mobile-table--compact-numeric .cv2-table th:nth-child(4),
+ .cv2-editable-mobile-table--compact-numeric .cv2-table td:nth-child(4){min-width:0;width:72px;max-width:72px;box-sizing:border-box}
+ .cv2-editable-mobile-table--compact-numeric .cv2-table td:nth-child(3) .cv2-control{width:76px;min-width:0;max-width:76px;padding-left:5px;padding-right:5px}
+ .cv2-sticky-first-column{max-width:100%;overflow-x:auto;isolation:isolate}
+ .cv2-sticky-first-column .cv2-table th:first-child,.cv2-sticky-first-column .cv2-table td:first-child{position:sticky;left:0;z-index:1;background:#fff;box-shadow:1px 0 #cdddf0}
+ .cv2-sticky-first-column .cv2-table th:first-child{z-index:2;background:#e8f0fb}
+ .cv2-sticky-first-column .cv2-table{width:max-content;min-width:100%}
+}
+
+/* Shared responsive list: optional mobile column order with first-column freeze. */
+.cv2-responsive-table-mobile{display:none}
+@media(max-width:720px){
+ .cv2-responsive-table-desktop{display:none}
+ .cv2-responsive-table-mobile{display:block;min-width:0}
+}
+
+
+/* Opt-in mobile stock tables: scroll both axes inside the table viewport.
+   A bounded scrollport is necessary because overflow-x:auto otherwise
+   prevents the header from sticking to the document viewport. */
+@media (max-width:720px) {
+  .cv2-mobile-sticky-header {
+    max-height: min(65dvh, 620px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    position: relative;
+  }
+  .cv2-mobile-sticky-header .cv2-table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .cv2-mobile-sticky-header .cv2-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #e8f0fb;
+    box-shadow: 0 1px #cdddf0;
+  }
+  .cv2-mobile-sticky-header .cv2-table thead th:first-child {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    background: #e8f0fb;
+    box-shadow: 1px 1px #cdddf0;
+  }
+}
+
+/* 공통 요약 지표의 한 줄 세부 링크 (예: F/UP 일정) */
+.cv2-summary-inline-links{display:flex;flex-wrap:wrap;align-items:center;gap:3px;font-size:12px;color:#64748b}
+.cv2-summary-inline-links>span{white-space:nowrap}
+.cv2-summary-inline-links .cv2-button{min-height:0;height:auto;padding:0;border:0;background:transparent;color:#155b9b;text-decoration:underline;font-size:12px;box-shadow:none}
+.cv2-summary-inline-separator{color:#94a3b8}
+
+/* Linked summary metrics occupy a single value row; no duplicate total. */
+.cv2-summary-strip__stat--links{gap:5px}
+.cv2-summary-strip__stat--links .cv2-summary-inline-links{flex-wrap:nowrap;white-space:nowrap}
+
+/* Shared opt-in viewport list: compact embedded tables keep paging visible on shorter screens. */
+@media (min-width: 761px) {
+  .cv2-list-content--viewport > .cv2-table-scroll {
+    max-height: max(180px, calc(100dvh - 495px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .cv2-list-content--viewport > .cv2-table-scroll .cv2-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #e8f0fb;
+  }
+  .cv2-list-content--viewport > .cv2-table-scroll .cv2-table thead th:first-child {
+    z-index: 4;
+  }
+}
+
+/* Reusable, compact 4 + 3 + 3 KPI dashboard. */
+.cv2-metric-dashboard{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px}
+.cv2-metric-dashboard__item{grid-column:span 3;min-width:0;min-height:132px;border:1px solid var(--cv2-border,#cddcf0);border-radius:9px;background:#fff;padding:14px 16px 12px;display:flex;flex-direction:column;gap:5px}
+.cv2-metric-dashboard__item--lower{grid-column:span 4}
+.cv2-metric-dashboard__name{font-size:14px;font-weight:700;color:#12335e}
+.cv2-metric-dashboard__value{font-size:32px;font-weight:750;line-height:1.1;color:#12335e}
+.cv2-metric-dashboard__item--lower .cv2-metric-dashboard__value{font-size:27px}
+.cv2-metric-dashboard__value small{font-size:14px;font-weight:500;margin-left:3px}
+.cv2-metric-dashboard__value--danger{color:#cf3041}
+.cv2-metric-dashboard__value--warning{color:#d48108}
+.cv2-metric-dashboard__description{font-size:12px;color:#7083a0;line-height:1.35}
+.cv2-metric-dashboard__link{margin-top:auto;padding-top:7px;border-top:1px solid #e5edf7}
+.cv2-metric-dashboard__link .cv2-button{padding:0;border:0;background:transparent}
+@media(max-width:900px){.cv2-metric-dashboard__item,.cv2-metric-dashboard__item--lower{grid-column:span 6}}
+@media(max-width:540px){.cv2-metric-dashboard__item{padding:12px 11px;min-height:132px}.cv2-metric-dashboard__value{font-size:28px}.cv2-metric-dashboard__item--lower .cv2-metric-dashboard__value{font-size:24px}}
+
+.cv2-app .cv2-labeled-tool { display:inline-flex; align-items:center; gap:8px; white-space:nowrap; font-size:12px; color:var(--cv2-text,#163764); }
+
+/* Shared compact master form: 7 fields on first line, address/remark 60:40 on second. */
+.cv2-form-two-row{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cv2-form-two-row>.cv2-semantic-fields{display:grid;grid-template-columns:repeat(7,minmax(0,180px));gap:12px;align-items:end}
+.cv2-form-two-row>.cv2-semantic-fields>.cv2-semantic-field{width:100%;min-width:0;max-width:none;flex:none}
+.cv2-form-two-row__last>.cv2-semantic-fields{display:grid;grid-template-columns:repeat(2,minmax(0,180px));gap:12px;align-items:end}
+.cv2-form-two-row__last .cv2-semantic-field{width:100%;min-width:0;max-width:none;flex:none}
+@media(max-width:1050px){.cv2-form-two-row>.cv2-semantic-fields{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){.cv2-form-two-row>.cv2-semantic-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.cv2-form-two-row__last>.cv2-semantic-fields{grid-template-columns:1fr}}
+
+/* Query list TYPE SCROLL: shared viewport-bounded body, sticky column headers.
+   A common_v2 observer measures available space; the fallback works without JS. */
+.cv2-list-content--scroll .cv2-table-scroll {
+  max-height:var(--cv2-list-scroll-max-height, max(120px, calc(100dvh - 380px)));
+  overflow-y:auto;
+  overflow-x:auto;
+  overscroll-behavior:contain;
+}
+.cv2-list-content--scroll .cv2-table thead th {
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:#e8f0fb;
+}
+.cv2-list-content--scroll .cv2-sticky-first-column .cv2-table thead th:first-child {z-index:5}
+
+/* AUTH workspace — centralized common_v2 screen styling; no module CSS. */
+.cv2-auth-workspace{display:grid;grid-template-columns:minmax(270px,35fr) minmax(0,65fr);gap:12px;align-items:start}
+.cv2-auth-workspace>.cv2-card{min-width:0}
+.cv2-auth-search{display:flex;align-items:end;gap:8px;margin-bottom:14px}
+.cv2-auth-search .cv2-field{flex:1;min-width:0}
+.cv2-auth-employee-head{display:flex;justify-content:space-between;background:#e9f0f9;padding:9px 12px;font-weight:600;font-size:12px}
+.cv2-auth-employees{max-height:550px;overflow-y:auto;border:1px solid #d5dfe9}
+.cv2-auth-employee{display:flex;width:100%;justify-content:space-between;align-items:center;text-align:left;gap:8px;padding:10px 12px;border:0;border-bottom:1px solid #d5dfe9;background:#fff;color:inherit;cursor:pointer}
+.cv2-auth-employee:hover,.cv2-auth-employee.is-selected{background:#e9f2ff}
+.cv2-auth-employee.is-selected{box-shadow:inset 3px 0 #235fa5}
+.cv2-auth-employee small{color:#64748b}
+.cv2-auth-permissions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cv2-auth-permission{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid #d5dfe9;border-radius:5px;background:#f6f8fb;cursor:pointer}
+.cv2-auth-permission span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv2-auth-permission input{accent-color:#235fa5;flex:none}
+.cv2-auth-permission.is-changed{border-color:#235fa5;background:#eaf2ff}
+@media(max-width:1050px){.cv2-auth-permissions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.cv2-auth-workspace{grid-template-columns:1fr}.cv2-auth-permissions{grid-template-columns:1fr}}
+
+/* Reusable remark pop-up editor (no module-specific styling). */
+.cv2-remark-trigger{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.cv2-remark-trigger .cv2-button{min-width:68px;white-space:nowrap}
+.cv2-remark-trigger--filled .cv2-button{border-color:#8cb6dc;background:#edf5ff;color:#164c87}
+.cv2-remark-dialog{border:1px solid #cbd9ec;border-radius:10px;padding:0;width:min(580px,calc(100vw - 32px));max-height:calc(100vh - 32px);box-shadow:0 14px 50px #152c4b40;color:#15375c}
+.cv2-remark-dialog::backdrop{background:#14253a66}
+.cv2-remark-dialog__body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.cv2-remark-dialog__body h2{margin:0;font-size:17px}
+.cv2-remark-dialog__textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:160px;padding:12px;font:inherit;line-height:1.5;border:1px solid #b9cde7;border-radius:6px}
+.cv2-remark-dialog__actions{display:flex;justify-content:flex-end;gap:8px}
+
+/* 공통 문서 작성일자 선택 */
+.cv2-document-date-dialog{border:1px solid #cad8e8;border-radius:10px;padding:0;max-width:min(440px,calc(100vw - 32px));width:100%;box-shadow:0 14px 40px #0002;color:#17365d;background:#fff}
+.cv2-document-date-dialog::backdrop{background:#172b4d66}
+.cv2-document-date-dialog__body{padding:20px;display:grid;gap:14px}
+.cv2-document-date-dialog__body h2{font-size:17px;margin:0}
+.cv2-document-date-dialog__description{font-size:13px;line-height:1.5;margin:0}
+.cv2-document-date-dialog__label{display:grid;gap:7px;font-size:13px;font-weight:600}
+.cv2-document-date-dialog__label input{height:34px;border:1px solid #cad8e8;border-radius:5px;padding:0 10px;font:inherit}
+.cv2-document-date-dialog__actions{display:flex;justify-content:flex-end;gap:8px}
+.cv2-document-date-dialog__actions button{height:34px;padding:0 18px;border:1px solid #cad8e8;border-radius:5px;background:#fff;cursor:pointer}
+.cv2-document-date-dialog__actions [data-action=confirm]{background:#174a86;color:white;border-color:#174a86}
+
+/* Standard Item Grid: field widths follow the existing central semantic tokens. */
+.cv2-itemgrid .cv2-field .cv2-control{width:100%;max-width:100%}
+.cv2-itemgrid .cv2-remark-trigger{display:inline-flex;width:max-content;max-width:100%}
+
+/* Shared search disclosure. No module-specific JS, CSS or event handlers. */
+.cv2-search-disclosure{width:100%;min-width:0}
+.cv2-search-disclosure__toggle{display:inline-flex;align-items:center;gap:10px;min-height:32px;cursor:pointer;color:#174a86;font-size:13px;font-weight:600;list-style:none;user-select:none}
+.cv2-search-disclosure__toggle::-webkit-details-marker{display:none}
+.cv2-search-disclosure__toggle::before{content:'▸';font-size:14px}
+.cv2-search-disclosure[open] .cv2-search-disclosure__toggle::before{content:'▾'}
+.cv2-search-disclosure__opened{display:none}
+.cv2-search-disclosure[open] .cv2-search-disclosure__opened{display:inline}
+.cv2-search-disclosure[open] .cv2-search-disclosure__closed{display:none}
+.cv2-search-disclosure__applied{font-size:12px;font-weight:400;color:#526985}
+.cv2-search-disclosure__fields{padding-top:8px}
+.cv2-search-disclosure__toggle:focus-visible{outline:2px solid #174a86;outline-offset:3px;border-radius:3px}
+
+/* Header-aligned shared search disclosure: no extra row when collapsed. */
+.cv2-search--collapsible .cv2-search-disclosure{display:inline-block;width:auto;min-width:0}
+.cv2-search--collapsible .cv2-search-disclosure__toggle{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:0 12px;border:1px solid #cad8e8;border-radius:5px;background:#fff;white-space:nowrap;cursor:pointer}
+.cv2-search--collapsible .cv2-card__actions{display:flex;align-items:center;gap:8px}
+.cv2-search--collapsible .cv2-card__aux--right{display:inline-flex;align-items:center;gap:8px}
+.cv2-search--collapsible .cv2-search-disclosure__fields{display:none}
+.cv2-search--collapsible:has(.cv2-search-disclosure[open]) .cv2-search-disclosure__fields{display:block;padding-top:0}
+.cv2-search--collapsible .cv2-search-disclosure__toggle::before{content:'▸'}
+.cv2-search--collapsible .cv2-search-disclosure[open] .cv2-search-disclosure__toggle::before{content:'▾'}
+
+/* Shared query-table density: no module-specific selectors or business changes. */
+.cv2-table--compact-columns col.cv2-col--count{width:var(--cv2-list-compact-count-width)}
+.cv2-table--compact-columns col.cv2-col--quantity{width:var(--cv2-list-compact-quantity-width)}
+.cv2-table--compact-columns col.cv2-col--action{width:var(--cv2-list-action-width)}
+.cv2-table--compact-columns:has(col.cv2-col--action:nth-last-child(3)) th:nth-last-child(-n+3),
+.cv2-table--compact-columns:has(col.cv2-col--action:nth-last-child(3)) td:nth-last-child(-n+3){padding-inline:var(--cv2-list-action-cell-padding-x);text-align:center}
+.cv2-table--compact-columns:has(col.cv2-col--action:nth-last-child(3)) td:nth-last-child(-n+3) .cv2-button{padding-inline:var(--cv2-list-action-button-padding-x)}
+
+/* Semantic compact widths; action cells may show an optional reason button. */
+.cv2-table--compact-columns col.cv2-col--amount{width:var(--cv2-list-amount-width)}
+.cv2-table--compact-columns col.cv2-col--reason-action{width:var(--cv2-list-reason-action-width)}
+.cv2-table--compact-columns td:has(> .cv2-candidate-actions){padding-inline:var(--cv2-list-action-cell-padding-x)}
+.cv2-candidate-actions{display:grid;grid-template-columns:44px 72px;align-items:center;justify-content:start;column-gap:4px;white-space:nowrap}
+.cv2-candidate-actions .cv2-button{justify-self:start}
+.cv2-candidate-actions .cv2-button:first-child{justify-self:center}
+.cv2-candidate-actions .cv2-button{padding-inline:var(--cv2-list-action-button-padding-x)}
+
+/* Shared read-only information dialog: compact label/content pairs. */
+.cv2-info-dialog .cv2-remark-dialog__body{gap:0;padding:22px 24px 18px}
+.cv2-info-dialog__heading{margin:0 0 16px;font-size:17px;line-height:1.45;font-weight:700;color:#17375d}
+.cv2-info-dialog__section{display:flex;flex-direction:column;gap:3px;margin:0;padding:0}
+.cv2-info-dialog__section + .cv2-info-dialog__section{margin-top:16px;padding-top:14px;border-top:1px solid #e2eaf4}
+.cv2-info-dialog__label{font-size:13px;font-weight:700;color:#234b78;line-height:1.4}
+.cv2-info-dialog__text{margin:0;font-size:13px;line-height:1.55;color:#253d57;overflow-wrap:anywhere}
+.cv2-info-dialog .cv2-remark-dialog__actions{margin-top:20px}
+
+/* Opt-in shared history query control, always outside the disclosure body. */
+.cv2-search-history{display:inline-flex;align-items:center;gap:6px;min-height:var(--cv2-input-height);white-space:nowrap;flex:0 0 auto;font-size:var(--cv2-font-label);cursor:pointer}
+.cv2-search-history>input{appearance:auto;width:16px;height:16px;margin:0;accent-color:#1b4b88;cursor:pointer}
+.cv2-search--history .cv2-card__header{flex-wrap:wrap}
+.cv2-search--history .cv2-card__actions{flex:0 1 auto;min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
+.cv2-search--history .cv2-card__aux--right{flex:0 1 auto;min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
+
+/* Standard query-list execution column: compact adjacent buttons. */
+.cv2-execution-actions{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+
+/* Domain/code master: presentation-only, scoped to the common domain-code screen.
+   Inputs keep their intrinsic working widths even when the table has spare space. */
+.cv2-domain-code-screen .cv2-table td .cv2-control[data-key="code"]{width:160px;max-width:100%;min-width:0}
+.cv2-domain-code-screen .cv2-table td .cv2-control[data-key="name"]{width:240px;max-width:100%;min-width:0}
+.cv2-domain-code-screen .cv2-table td .cv2-control[data-key="active"]{width:120px;max-width:100%;min-width:0}
+.cv2-domain-code-screen .cv2-table td .cv2-control[data-key="remark"]{width:180px;max-width:100%;min-width:0}
+@media(max-width:760px){
+ .cv2-domain-code-screen .cv2-table td .cv2-control[data-key]{min-width:0}
+}
+
+/* Mobile stage 1: containment only. Keep desktop dimensions and table columns unchanged. */
+@media (max-width: 760px) {
+  .cv2-app { width: 100%; max-width: 100%; min-width: 0; }
+  .cv2-app .cv2-card, .cv2-app .cv2-card__header,
+  .cv2-app .cv2-card__heading, .cv2-app .cv2-card__actions,
+  .cv2-app .cv2-field, .cv2-app .cv2-semantic-field { min-width: 0; max-width: 100%; }
+  .cv2-app .cv2-card__heading, .cv2-app .cv2-page-title,
+  .cv2-app .cv2-card__header h1, .cv2-app .cv2-card__header h2,
+  .cv2-app .cv2-field label, .cv2-app .cv2-semantic-field label {
+    overflow-wrap: anywhere; word-break: normal;
+  }
+  .cv2-app input:not([type=checkbox]):not([type=radio]),
+  .cv2-app select, .cv2-app textarea { max-width: 100%; }
+  .cv2-app .cv2-table-scroll { max-width: 100%; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cv2-app .cv2-table-scroll .cv2-table { width: max-content; min-width: 100%; }
+  .cv2-app .cv2-card__actions { flex-wrap: wrap; }
+  .cv2-app .cv2-info-dialog__text { overflow-wrap: anywhere; }
+}
+
+/* Mobile stage 2: shared layout refinements; desktop rules are unchanged. */
+.cv2-responsive-metrics__mobile{display:none}
+@media(max-width:760px){
+ .cv2-app .cv2-pagehead,.cv2-app .cv2-pagehead__left{min-width:0;max-width:100%}
+ .cv2-app .cv2-pagehead__left{flex-wrap:wrap;gap:8px 10px}
+ .cv2-app .cv2-title{margin-right:8px;overflow-wrap:anywhere}
+ .cv2-app .cv2-pagehead .cv2-row{flex-wrap:wrap;gap:6px}
+ .cv2-app .cv2-card__header{min-width:0;max-width:100%;gap:10px}
+ .cv2-app .cv2-card__heading{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .cv2-app .cv2-card__aux{min-width:0;max-width:100%;flex-wrap:wrap;white-space:normal}
+ .cv2-app .cv2-search--collapsible .cv2-card__aux--right{flex-wrap:wrap;justify-content:flex-end}
+ .cv2-app .cv2-search--collapsible .cv2-card__actions{flex-wrap:wrap;justify-content:flex-end}
+ .cv2-app .cv2-search-history{max-width:100%}
+ .cv2-app .cv2-table-scroll,.cv2-app .cv2-itemgrid-wrap{overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+ .cv2-app .cv2-detail-summary{min-width:0}
+ .cv2-app .cv2-detail-summary>*{min-width:0;overflow-wrap:anywhere}
+ .cv2-app .cv2-semantic-fields,.cv2-app .cv2-field-grid{min-width:0;max-width:100%}
+ .cv2-responsive-metrics{display:block;min-width:0;width:100%}
+ .cv2-responsive-metrics__desktop{display:none}
+ .cv2-responsive-metrics__mobile{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;width:100%}
+ .cv2-responsive-metrics__item{min-width:0;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;padding:8px 4px;border-radius:6px;background:#f1f5fb;text-align:center}
+ .cv2-responsive-metrics__label{font-size:11px;line-height:1.35;color:#5c718c;overflow-wrap:anywhere}
+ .cv2-responsive-metrics__item strong{font-size:12px;font-weight:650;line-height:1.35;color:#17375f;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+ .cv2-responsive-metrics--amount .cv2-responsive-metrics__mobile{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cv2-responsive-metrics--amount .cv2-responsive-metrics__item{align-items:flex-start;text-align:left;padding:6px 8px;background:transparent}
+}
+@media(max-width:360px){.cv2-responsive-metrics__mobile{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Mobile stage 3 — compact common layout, all modules; PC layout untouched. */
+@media (max-width:760px) {
+  /* Make useful width available to every card without altering desktop geometry. */
+  .cv2-app { padding:10px 5px; }
+  .cv2-app .cv2-pagehead { margin-bottom:12px; gap:8px; }
+  .cv2-app .cv2-pagehead__left { gap:6px 8px; }
+  .cv2-app .cv2-title { margin-right:4px; }
+  .cv2-app .cv2-card { max-width:100%; }
+  .cv2-app .cv2-card__header { gap:6px; }
+  /* Compact shared metrics: same data, less vertical space. */
+  .cv2-responsive-metrics__mobile { gap:4px; }
+  .cv2-responsive-metrics__item { padding:5px 3px; gap:2px; min-height:42px; }
+  .cv2-responsive-metrics__label { font-size:10px; line-height:1.2; }
+  .cv2-responsive-metrics__item strong { font-size:12px; line-height:1.25; }
+  .cv2-responsive-metrics--amount .cv2-responsive-metrics__mobile { grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; }
+  .cv2-responsive-metrics--amount .cv2-responsive-metrics__item { padding:4px 2px; min-height:0; align-items:center; text-align:center; background:transparent; }
+  .cv2-responsive-metrics--amount .cv2-responsive-metrics__item strong { font-size:11px; overflow-wrap:anywhere; }
+  /* Generic common summary strip: no module-specific rules. */
+  .cv2-summary-strip { gap:6px; padding:7px 4px 3px; }
+  .cv2-summary-strip__stat { gap:3px; }
+  .cv2-summary-strip__stat span { font-size:11px; overflow-wrap:anywhere; }
+  .cv2-summary-strip__stat strong { font-size:13px; overflow-wrap:anywhere; }
+  .cv2-app .cv2-table-scroll, .cv2-app .cv2-itemgrid-wrap { width:100%; max-width:100%; }
+}
+@media (max-width:360px) {
+  .cv2-responsive-metrics--amount .cv2-responsive-metrics__mobile { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+/* Mobile search: separate summary metrics from the three query controls.
+   Scoped to collapsible search cards with the history checkbox. */
+.cv2-search--history.cv2-search--collapsible .cv2-search-metrics {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+.cv2-search--history.cv2-search--collapsible .cv2-search-execution {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .cv2-app .cv2-search--history.cv2-search--collapsible > .cv2-card__header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible > .cv2-card__header > .cv2-card__heading {
+    width: 100%;
+    flex: 0 1 auto;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible > .cv2-card__header > .cv2-card__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 6px;
+    row-gap: 8px;
+    width: 100%;
+    margin-left: 0;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible .cv2-card__aux--right {
+    display: contents;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible .cv2-search-metrics {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible .cv2-search-execution {
+    grid-column: 1;
+    justify-self: end;
+    gap: 6px;
+    min-width: 0;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible > .cv2-card__header > .cv2-card__actions > .cv2-row {
+    grid-column: 2;
+    justify-self: end;
+    flex-wrap: nowrap;
+  }
+  .cv2-app .cv2-search--history.cv2-search--collapsible .cv2-search-disclosure__toggle {
+    padding-inline: 8px;
+  }
+}

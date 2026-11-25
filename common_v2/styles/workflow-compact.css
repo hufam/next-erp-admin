@@ -1,0 +1,19 @@
+/* Common V2: compact workflow composition, shared across modules. */
+.cv2-workflow-guide{margin:0 0 10px;padding:8px 12px;border:1px solid var(--cv2-border,#cbdaf0);border-radius:5px;font-size:12px;line-height:1.45;color:var(--cv2-text,#163c71)}
+.cv2-workflow-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+.cv2-workflow-arrow{color:#8494a9}
+.cv2-workflow-step{padding:4px 8px;border:1px solid #cbd5e1;border-radius:4px;background:#f1f5f9;color:#64748b;font-size:12px}
+.cv2-workflow-step[data-tone="success"]{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+.cv2-workflow-step[data-tone="info"]{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.cv2-workflow-step[data-tone="warning"]{background:#fffbeb;border-color:#fcd34d;color:#92400e}
+.cv2-workflow-step[data-tone="danger"]{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.cv2-workflow-task{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:8px 0;font-size:13px}
+.cv2-workflow-task strong{color:#163c71}.cv2-workflow-task span{color:#475569}
+
+/* Detail workflow: only the active step is emphasized. */
+.cv2-workflow-step[data-tone="neutral"]{background:#f8fafc;border-color:#d6dce5;color:#718096;font-weight:400}
+.cv2-workflow-step[data-tone="warning"],.cv2-workflow-step[data-tone="info"],.cv2-workflow-step[data-tone="danger"],.cv2-workflow-step[data-tone="success"]{font-weight:700}
+/* One-line, right-aligned financial totals below the item list. */
+.cv2-amount-summary{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;padding:7px 2px 2px;font-size:12px;color:var(--cv2-text,#163c71)}
+.cv2-amount-summary__item{white-space:nowrap}
+.cv2-amount-summary__item strong{font-weight:700;margin-left:3px;font-variant-numeric:tabular-nums}

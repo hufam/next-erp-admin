@@ -1,0 +1,15 @@
+/* Generic reusable two-panel selection editor. */
+.cv2-selection-workspace{display:grid;grid-template-columns:minmax(270px,1fr) minmax(460px,2fr);gap:var(--cv2-card-gap,16px);align-items:start}
+.cv2-selection-workspace .cv2-card{min-width:0}
+.cv2-selection-search{display:flex;gap:8px;margin-bottom:12px}
+.cv2-selection-search .cv2-control{flex:1;min-width:0}
+.cv2-selection-workspace tr[data-selection-id]{cursor:pointer}
+.cv2-selection-workspace tr[data-selection-id]:hover{background:#edf4ff}
+.cv2-selection-selected{background:#e5f0ff}
+.cv2-selection-checklist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 14px;padding:12px 0}
+.cv2-selection-check{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding:7px 9px;border:1px solid #d7e2f0;border-radius:5px;cursor:pointer}
+.cv2-selection-check span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv2-selection-check input{accent-color:#1c5ca6}
+.cv2-selection-check:has([data-changed="true"]){background:#fff7e5}
+@media(max-width:850px){.cv2-selection-workspace{grid-template-columns:1fr}.cv2-selection-checklist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.cv2-selection-checklist{grid-template-columns:1fr}}
